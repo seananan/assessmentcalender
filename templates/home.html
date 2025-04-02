@@ -1,7 +1,15 @@
 {% extends "base.html" %}
 
-{% block pageheading %}welcome{% endblock %}
+{% block pageheading %}
+    {% if session.logged_in %}
+        <br> Hello, {{ user_name }}!
+    {% else %}
+        <br> Book a tutor now!, log in first tho.
+    {% endif %}
+{% endblock %}
 
 {% block main %}
-<strong><em>Hello World</em></strong>
+    <div style="text-align: center;">
+        <img src="/static/images/stock.jpg" style="max-width: 100%; height: auto;">
+    </div>
 {% endblock %}
