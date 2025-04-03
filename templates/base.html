@@ -16,8 +16,12 @@
         <div class="navbar-brand">Wellington College.</div>
         <div class="navbar-links">
             <a href="/">Home</a>
-            <a href="/signup">Sign Up</a>
-            <a href="/login">Log In</a>
+            {% if session.logged_in %}
+                <a href="/logout">Log Out</a>
+            {% else %}
+                <a href="/signup">Sign Up</a>
+                <a href="/login">Log In</a>
+            {% endif %}
         </div>
     </div>
 </nav>

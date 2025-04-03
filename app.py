@@ -23,7 +23,7 @@ def connect_database(db_file):
 
 
 @app.route('/')
-def render_homepage():  # put application's code here
+def render_homepage():
     username = None
     if 'user_id' in session:
         con = connect_database(DATABASE)
@@ -37,7 +37,7 @@ def render_homepage():  # put application's code here
     return render_template('home.html', user_name=username)
 
 @app.route('/signup',methods=['POST', 'GET'])
-def render_signup_page():  # put application's code here
+def render_signup_page():
     if request.method =='POST':
         fname = request.form.get('user_fname').title().strip()
         lname = request.form.get('user_lname').title().strip()
@@ -71,7 +71,7 @@ def render_signup_page():  # put application's code here
     return render_template('signup.html')
 
 @app.route('/login',methods=['POST', 'GET'])
-def render_login_page():  # put application's code here\
+def render_login_page():
     if request.method == 'POST':
         email = request.form.get('email').strip().lower()
         password = request.form.get('user_password1')
@@ -101,6 +101,11 @@ def render_login_page():  # put application's code here\
         else:
             return redirect("/login?error=Account+not+found")
     return render_template('login.html')
+
+@app.route('/logout')
+def render_logout_page():
+    session.clear()
+    return redirect("/")
 
 if __name__ == '__main__':
     app.run()
