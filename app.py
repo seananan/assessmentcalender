@@ -107,5 +107,19 @@ def render_logout_page():
     session.clear()
     return redirect("/")
 
+@app.route('/creategroup',methods=['POST', 'GET'])
+def render_creategroup_page():
+    if request.method == 'POST':
+        subject = request.form.get('subject')
+        level = request.form.get('level')
+        password = request.form.get('password')
+        date = request.form.get('date')
+        time = request.form.get('time')
+        con = connect_database(DATABASE)
+        cur=con.cursor()
+        query_insert = "INSERT INTO group (group_subject, group_year, group_password, date, time) VALUES (?, ?, ?, ?, ?)"
+        cur.execute(query_insert, (subject, level, password, date, time))
+    return render_template("creategroup.html")
+
 if __name__ == '__main__':
     app.run()
