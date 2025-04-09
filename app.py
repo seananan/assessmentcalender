@@ -117,9 +117,11 @@ def render_creategroup_page():
         time = request.form.get('time')
         con = connect_database(DATABASE)
         cur=con.cursor()
-        query_insert = "INSERT INTO group (group_subject, group_year, group_password, date, time) VALUES (?, ?, ?, ?, ?)"
+        query_insert = "INSERT INTO group_class (group_subject, group_year, group_password, group_date, group_time) VALUES (?, ?, ?, ?, ?)"
         cur.execute(query_insert, (subject, level, password, date, time))
+        con.commit()
+        con.close()
+        redirect("/")
     return render_template("creategroup.html")
-
 if __name__ == '__main__':
     app.run()
