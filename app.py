@@ -2,11 +2,14 @@ from flask import Flask, render_template, request, redirect, session
 import sqlite3
 from sqlite3 import Error
 from flask_bcrypt import Bcrypt
+from datetime import date
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.secret_key = "secret_key"
 DATABASE = 'DB_FILE'
+today=date.today()
+
 
 def connect_database(db_file):
     """
@@ -123,5 +126,13 @@ def render_creategroup_page():
         con.close()
         redirect("/")
     return render_template("creategroup.html")
+
+@app.route('/yourgroups',methods=['POST', 'GET'])
+def render_yourgroups_page():
+    con=connect_database(DATABASE)
+    cur=con.cursor
+    query=
+    return render_template("yourgroups.html")
+
 if __name__ == '__main__':
     app.run()

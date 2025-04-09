@@ -1,10 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block pageheading %}Your Classes{% endblock %}
+
+{% block main %}
+    <table>
+        <tr>
+            <th>Subject</th>
+            <th>Level</th>
+            <th>Time</th>
+            <th>Teacher</th>
+            <th>Email</th>
+            <th>Apply</th>
+        </tr>
+        {% for session in sessions %}
+        <tr>
+            <td>{{ session[1] }}</td>
+            <td>{{ session[2] }}</td>
+            <td>{{ session[3] }}</td>
+            <td>{{ session[4] }} {{ session[5] }}</td>
+            <td>{{ session[6] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+
