@@ -28,15 +28,6 @@ def connect_database(db_file):
 @app.route('/')
 def render_homepage():
     username = None
-    if 'user_id' in session:
-        con = connect_database(DATABASE)
-        cur = con.cursor()
-        query = "SELECT first_name FROM user WHERE user_id = ?"
-        cur.execute(query, (session['user_id'],))
-        name = cur.fetchone()
-        con.close()
-        if name:
-            username = name[0]
     return render_template('home.html', user_name=username)
 
 @app.route('/signup',methods=['POST', 'GET'])
@@ -131,8 +122,12 @@ def render_creategroup_page():
 def render_yourgroups_page():
     con=connect_database(DATABASE)
     cur=con.cursor
-    query=
+    query="SELECT group_class.group_subject, group_class.group_year, group_class."
     return render_template("yourgroups.html")
+
+@app.route('/createassessment',methods=['POST','GET'])
+def render_createassessment_page():
+    return render_template("createassessment.html")
 
 if __name__ == '__main__':
     app.run()
