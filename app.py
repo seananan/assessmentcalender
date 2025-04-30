@@ -27,11 +27,27 @@ def connect_database(db_file):
 
 @app.route('/')
 def render_homepage():
+    """
+    :return: Renders home page of website
+    """
     username = None
+    if 'user_id' in session:
+        con = connect_database(DATABASE)
+        cur = con.cursor()
+        query = "SELECT first_name FROM user WHERE user_id = ?"
+        cur.execute(query, (session['user_id'],))
+        name = cur.fetchone()
+        con.close()
+        if name:
+            username = name[0]
     return render_template('home.html', user_name=username)
+
 
 @app.route('/signup',methods=['POST', 'GET'])
 def render_signup_page():
+    """
+    :return: Ren
+    """
     if request.method =='POST':
         fname = request.form.get('user_fname').title().strip()
         lname = request.form.get('user_lname').title().strip()
@@ -57,8 +73,10 @@ def render_signup_page():
         is_teacher = 1 if user_role == "Teacher" else 0
         query_insert = "INSERT INTO user (first_name, last_name, email, password, is_teacher) VALUES (?, ?, ?, ?, ?)"
         cur.execute(query_insert, (fname, lname, email, hashed_password, is_teacher))
+        user_id = cur.lastrowid
         con.commit()
         con.close()
+        session["user_id"] = user_id
         session["logged_in"] = True
         session['is_teacher'] = is_teacher
         return redirect("/")
@@ -124,6 +142,21 @@ def render_yourgroups_page():
     cur=con.cursor
     query="SELECT group_class.group_subject, group_class.group_year, group_class."
     return render_template("yourgroups.html")
+
+@app.route('/joinclass', methods=['POST','GET'])
+def render_joinclass_page():
+    if request.method == 'POST':
+        password=request.form.get()
+        con=connect_database(DATABASE)
+        cur=con.cursor
+        query = "SELECT group_id FROM user WHERE password = ?"
+        cur.execute(query, (password,))
+        class_password = cur.fetchone()
+        con.close()
+        if class_password == password:
+            print("hello")
+    return render_template("joinclass.html")
+
 
 @app.route('/createassessment',methods=['POST','GET'])
 def render_createassessment_page():
