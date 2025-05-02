@@ -139,7 +139,7 @@ def render_yourgroups_page():
     cur=con.cursor
     query="SELECT group_class.group_subject, group_class.group_year, group_class."
     return render_template("yourgroups.html")
-x
+
 
 @app.route('/groupsignup', methods=['POST','GET'])
 def render_groupsignup_page():
