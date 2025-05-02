@@ -89,9 +89,6 @@ def render_login_page():
         password = request.form.get('user_password1')
         con = connect_database(DATABASE)
         cur = con.cursor()
-        cur.execute("SELECT email, password  FROM user")
-        all_emails = cur.fetchall()
-        print(f"DEBUG: All emails in database: {all_emails}")
         query = "SELECT password, user_id, email, is_teacher FROM user WHERE email = ?"
         cur.execute(query,(email,))
         user_info = cur.fetchone()
@@ -129,8 +126,8 @@ def render_creategroup_page():
         time = request.form.get('time')
         con = connect_database(DATABASE)
         cur=con.cursor()
-        query_insert = "INSERT INTO group_class (group_subject, group_year, group_password, group_date, group_time) VALUES (?, ?, ?, ?, ?)"
-        cur.execute(query_insert, (subject, level, password, date, time))
+        query_insert = "INSERT INTO group_class (group_subject, group_year, group_password) VALUES (?, ?, ?)"
+        cur.execute(query_insert, (subject, level, password))
         con.commit()
         con.close()
         redirect("/")
@@ -143,19 +140,29 @@ def render_yourgroups_page():
     query="SELECT group_class.group_subject, group_class.group_year, group_class."
     return render_template("yourgroups.html")
 
-@app.route('/joinclass', methods=['POST','GET'])
-def render_joinclass_page():
+
+@app.route('/groupsignup', methods=['POST','GET'])
+def render_groupsignup_page():
     if request.method == 'POST':
-        password=request.form.get()
-        con=connect_database(DATABASE)
-        cur=con.cursor
-        query = "SELECT group_id FROM user WHERE password = ?"
+        password = request.form.get('code')
+        print(password)
+        con = connect_database(DATABASE)
+        cur = con.cursor()
+        query = "SELECT group_password FROM group_class WHERE group_password = ?"
         cur.execute(query, (password,))
-        class_password = cur.fetchone()
+        group_id = cur.lastrowid()
+        user_info = cur.fetchall()
+        if user_info:
+            user_id = session['user_id']
+            con = connect_database(DATABASE)
+            cur = con.cursor()
+            query_insert = "INSERT INTO group_user (user_id, group_id) VALUES (?, ?)"
+            cur.execute(query_insert, (user_id, group_id))
+            con.commit()
+            con.close()
         con.close()
-        if class_password == password:
-            print("hello")
-    return render_template("joinclass.html")
+        print("sean")
+    return render_template("groupsignup.html")
 
 
 @app.route('/createassessment',methods=['POST','GET'])
