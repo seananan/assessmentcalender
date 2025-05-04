@@ -139,7 +139,7 @@ def render_yourgroups_page():
     cur=con.cursor
     query="SELECT group_class.group_subject, group_class.group_year, group_class."
     return render_template("yourgroups.html")
-x
+
 
 @app.route('/groupsignup', methods=['POST','GET'])
 def render_groupsignup_page():
@@ -148,16 +148,17 @@ def render_groupsignup_page():
         print(password)
         con = connect_database(DATABASE)
         cur = con.cursor()
-        query = "SELECT group_password FROM group_class WHERE group_password = ?"
+        query = "SELECT group_id FROM group_class WHERE group_password = ?"
         cur.execute(query, (password,))
-        group_id = cur.lastrowid()
-        user_info = cur.fetchall()
-        if user_info:
+        group_id = cur.fetchone()
+        group_id2=group_id[0]
+        print(group_id)
+        if group_id:
             user_id = session['user_id']
             con = connect_database(DATABASE)
             cur = con.cursor()
-            query_insert = "INSERT INTO group_user (user_id, group_id) VALUES (?, ?)"
-            cur.execute(query_insert, (user_id, group_id))
+            query_insert = "INSERT INTO group_user (fk_user_id, fk_group_id) VALUES (?, ?)"
+            cur.execute(query_insert, (user_id, group_id2))
             con.commit()
             con.close()
         con.close()

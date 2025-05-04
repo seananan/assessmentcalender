@@ -1,5 +1,5 @@
 * {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'serif', sans-serif;
     padding: 0;
     margin: 0;
     box-sizing: border-box;
@@ -78,7 +78,7 @@ nav a:hover {
 
 a, a:visited {
     color: rgb(255, 196, 48);
-    /*color:hotpink;*/
+    font-family: 'sans-serif';
     text-decoration: none;
 }
 
