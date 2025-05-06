@@ -122,12 +122,11 @@ def render_creategroup_page():
         subject = request.form.get('subject')
         level = request.form.get('level')
         password = request.form.get('password')
-        date = request.form.get('date')
-        time = request.form.get('time')
+        user_id=session['user_id']
         con = connect_database(DATABASE)
         cur=con.cursor()
-        query_insert = "INSERT INTO group_class (group_subject, group_year, group_password) VALUES (?, ?, ?)"
-        cur.execute(query_insert, (subject, level, password))
+        query_insert = "INSERT INTO group_class (group_subject, group_year, group_password, fk_user_id) VALUES (?, ?, ?, ?)"
+        cur.execute(query_insert, (subject, level, password, user_id))
         con.commit()
         con.close()
         redirect("/")
@@ -137,7 +136,7 @@ def render_creategroup_page():
 def render_yourgroups_page():
     con=connect_database(DATABASE)
     cur=con.cursor
-    query="SELECT group_class.group_subject, group_class.group_year, group_class."
+    query="SELECT group_class.group_subject, group_class.group_year, user.first_name, user.last_name, user.email FROM group_class INNER JOIN user ON user.user_id = group_class.fk_user_id"
     return render_template("yourgroups.html")
 
 
@@ -150,15 +149,14 @@ def render_groupsignup_page():
         cur = con.cursor()
         query = "SELECT group_id FROM group_class WHERE group_password = ?"
         cur.execute(query, (password,))
-        group_id = cur.fetchone()
-        group_id2=group_id[0]
-        print(group_id)
+        user_info = cur.fetchall()
+        group_id = user_info[0][0]
         if group_id:
             user_id = session['user_id']
             con = connect_database(DATABASE)
             cur = con.cursor()
             query_insert = "INSERT INTO group_user (fk_user_id, fk_group_id) VALUES (?, ?)"
-            cur.execute(query_insert, (user_id, group_id2))
+            cur.execute(query_insert, (user_id, group_id))
             con.commit()
             con.close()
         con.close()
