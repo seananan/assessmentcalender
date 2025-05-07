@@ -9,7 +9,7 @@ bcrypt = Bcrypt(app)
 app.secret_key = "secret_key"
 DATABASE = 'DB_FILE'
 today=date.today()
-
+wrong_password = False
 
 def connect_database(db_file):
     """
@@ -142,6 +142,7 @@ def render_yourgroups_page():
 
 @app.route('/groupsignup', methods=['POST','GET'])
 def render_groupsignup_page():
+    wrong_password = False
     if request.method == 'POST':
         password = request.form.get('code')
         print(password)
@@ -150,8 +151,14 @@ def render_groupsignup_page():
         query = "SELECT group_id FROM group_class WHERE group_password = ?"
         cur.execute(query, (password,))
         user_info = cur.fetchall()
-        group_id = user_info[0][0]
-        if group_id:
+        if user_info:
+            group_id = user_info[0][0]
+            wrong_password = False
+            print(group_id)
+        else:
+            group_id = "bad"
+            wrong_password = True
+        if group_id != "bad":
             user_id = session['user_id']
             con = connect_database(DATABASE)
             cur = con.cursor()
@@ -159,9 +166,11 @@ def render_groupsignup_page():
             cur.execute(query_insert, (user_id, group_id))
             con.commit()
             con.close()
+            wrong_password=False
         con.close()
         print("sean")
-    return render_template("groupsignup.html")
+        print(wrong_password)
+    return render_template("groupsignup.html", wrong_password=wrong_password)
 
 
 @app.route('/createassessment',methods=['POST','GET'])
