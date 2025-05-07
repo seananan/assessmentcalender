@@ -46,7 +46,7 @@ def render_homepage():
 @app.route('/signup',methods=['POST', 'GET'])
 def render_signup_page():
     """
-    :return: Ren
+    :return: Renders signup page
     """
     if request.method =='POST':
         fname = request.form.get('user_fname').title().strip()
@@ -64,9 +64,7 @@ def render_signup_page():
             redirect('/')
         hashed_password = bcrypt.generate_password_hash(password1)
         con = connect_database(DATABASE)
-        querysean = "SELECT email FROM user"
         cur = con.cursor()
-        cur.execute(querysean)
         all_emails = cur.fetchall()
         if (email,) in all_emails:
             return redirect("\signup?error=email+already+in+use")
@@ -135,8 +133,13 @@ def render_creategroup_page():
 @app.route('/yourgroups',methods=['POST', 'GET'])
 def render_yourgroups_page():
     con=connect_database(DATABASE)
-    cur=con.cursor
-    query="SELECT group_class.group_subject, group_class.group_year, user.first_name, user.last_name, user.email FROM group_class INNER JOIN user ON user.user_id = group_class.fk_user_id"
+    cur=con.cursor()
+    query="SELECT group_class.group_subject, group_class.group_year, user.first_name, user.last_name, user.email FROM group_class JOIN user ON group_class.fk_user_id = user.user_id"
+    cur.execute(query,)
+    john=cur.fetchall()
+    con.commit()
+    con.close()
+    print(john)
     return render_template("yourgroups.html")
 
 
@@ -162,8 +165,8 @@ def render_groupsignup_page():
             user_id = session['user_id']
             con = connect_database(DATABASE)
             cur = con.cursor()
-            query_insert = "INSERT INTO group_user (fk_user_id, fk_group_id) VALUES (?, ?)"
-            cur.execute(query_insert, (user_id, group_id))
+            query_insert = "INSERT INTO group_class (fk_user_id) VALUES (?)"
+            cur.execute(query_insert, (user_id, ))
             con.commit()
             con.close()
             wrong_password=False
