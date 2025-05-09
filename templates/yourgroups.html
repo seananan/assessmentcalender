@@ -7,18 +7,15 @@
         <tr>
             <th>Subject</th>
             <th>Level</th>
-            <th>Time</th>
             <th>Teacher</th>
             <th>Email</th>
-            <th>Apply</th>
         </tr>
-        {% for session in sessions %}
+        {% for class in classes %}
         <tr>
-            <td>{{ session[1] }}</td>
-            <td>{{ session[2] }}</td>
-            <td>{{ session[3] }}</td>
-            <td>{{ session[4] }} {{ session[5] }}</td>
-            <td>{{ session[6] }}</td>
+            <td>{{ class[0] }}</td>
+            <td>{{ class[1] }}</td>
+            <td>{{ class[2] }} {{ class[3] }}</td>
+            <td>{{ class[4] }}</td>
         </tr>
         {% endfor %}
     </table>

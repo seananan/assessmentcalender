@@ -134,13 +134,13 @@ def render_creategroup_page():
 def render_yourgroups_page():
     con=connect_database(DATABASE)
     cur=con.cursor()
-    query="SELECT group_class.group_subject, group_class.group_year, user.first_name, user.last_name, user.email FROM group_class JOIN user ON group_class.fk_user_id = user.user_id"
+    query="SELECT group_class.group_subject, group_class.group_year, user.first_name, user.last_name, user.email FROM group_user JOIN user ON group_user.fk_user_id=user.user_id JOIN group_class ON group_user.fk_group_id=group_class.group_id;"
     cur.execute(query,)
     john=cur.fetchall()
     con.commit()
     con.close()
     print(john)
-    return render_template("yourgroups.html")
+    return render_template("yourgroups.html",classes=john)
 
 
 @app.route('/groupsignup', methods=['POST','GET'])
@@ -153,25 +153,23 @@ def render_groupsignup_page():
         cur = con.cursor()
         query = "SELECT group_id FROM group_class WHERE group_password = ?"
         cur.execute(query, (password,))
-        user_info = cur.fetchall()
-        if user_info:
-            group_id = user_info[0][0]
-            wrong_password = False
-            print(group_id)
-        else:
-            group_id = "bad"
-            wrong_password = True
-        if group_id != "bad":
+        result = cur.fetchall()
+        con.commit()
+        con.close()
+        if result:
             user_id = session['user_id']
+            group_id = result[0][0]
+            print(group_id, "HELLO")
+            print(user_id, "GOODBYE")
             con = connect_database(DATABASE)
             cur = con.cursor()
-            query_insert = "INSERT INTO group_class (fk_user_id) VALUES (?)"
-            cur.execute(query_insert, (user_id, ))
+            query_insert = "INSERT INTO group_user (fk_group_id, fk_user_id) VALUES (?, ?)"
+            cur.execute(query_insert, (group_id, user_id))
             con.commit()
             con.close()
-            wrong_password=False
+        else:
+            wrong_password = True
         con.close()
-        print("sean")
         print(wrong_password)
     return render_template("groupsignup.html", wrong_password=wrong_password)
 
