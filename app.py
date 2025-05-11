@@ -116,6 +116,7 @@ def render_logout_page():
 
 @app.route('/creategroup',methods=['POST', 'GET'])
 def render_creategroup_page():
+    subjects = ["Art", "Biology", "Chemistry", "Drama", "English", "Geography", "History", "Mathematics", "Music", "Physics"]
     if request.method == 'POST':
         subject = request.form.get('subject')
         level = request.form.get('level')
@@ -128,7 +129,7 @@ def render_creategroup_page():
         con.commit()
         con.close()
         redirect("/")
-    return render_template("creategroup.html")
+    return render_template("creategroup.html", subjects=subjects)
 
 @app.route('/yourgroups',methods=['POST', 'GET'])
 def render_yourgroups_page():
