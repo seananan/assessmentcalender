@@ -172,12 +172,35 @@ def render_groupsignup_page():
             wrong_password = True
         con.close()
         print(wrong_password)
+        redirect('/')
     return render_template("groupsignup.html", wrong_password=wrong_password)
 
 
 @app.route('/createassessment',methods=['POST','GET'])
 def render_createassessment_page():
+    if request.method == 'POST':
+        as_num=request.form.get('as_n')
+        as_name=request.form.get('as_name')
+        credits=request.form.get('credits')
+        d_date=request.form.get('d_date')
+        d_time=request.form.get('d_time')
+        s_date=request.form.get('date_start')
+        as_type=request.form.get('as_type')
+        print(as_num,as_name,credits,d_date,d_time,s_date,as_type)
+        con=connect_database(DATABASE)
+        cur=con.cursor()
+        query_insert="INSERT INTO assessments(as_num, as_name, credits, d_date, d_time, s_date, type) VALUES (?,?,?,?,?,?,?)"
+        cur.execute(query_insert, (as_num, as_name, credits, d_date, d_time, s_date, as_type))
+        con.commit()
+        con.close()
+        redirect('/')
     return render_template("createassessment.html")
+
+@app.route('/addassessment',methods=['POST','GET'])
+def render_addassessment_page():
+    con=connect_database(DATABASE)
+    cur=con.cursor()
+    query="SELECT as_num, as_name, credits, d_date, d_time, s_time, type FROM assessments"
 
 if __name__ == '__main__':
     app.run()

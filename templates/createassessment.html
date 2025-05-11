@@ -14,27 +14,34 @@
         </div>
         <div class="form-group">
             <div class="form-label"> Credits: </div>
-            <div class="form-element"> <input type="text" name="credits" required></div>
+            <div class="form-element">
+                <select type="text" name="credits" required>
+                    <option value="" disabled selected>Select amount of credits</option>
+                    {% for credit in range(1, 11) %}
+                        <option value="{{ credit }}">{{ credit }}</option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
         <div class="form-group">
             <div class="form-label"> Date Due: </div>
-            <div class="form-element"> <input type="text" name="d_date" required></div>
+            <div class="form-element"> <input type="date" name="d_date" required></div>
         </div>
         <div class="form-group">
             <div class="form-label"> Time Due: </div>
-            <div class="form-element"> <input type="text" name="d_time" required></div>
+            <div class="form-element"> <input type="time" name="d_time" required></div>
         </div>
         <div class="form-group">
             <div class="form-label"> Date Starting: </div>
-            <div class="form-element"> <input type="text" name="date_start" required></div>
+            <div class="form-element"> <input type="date" name="date_start" required></div>
         </div>
         <div class="form-group">
                 <div class="form-label">Assessment Type:</div>
                 <div class="form-element" style="display: flex; gap: 20px; align-items: center;">
-                    <input type="radio" id="unit" name="user_role" value="Unit" required>
+                    <input type="radio" id="unit" name="as_type" value="Unit" required>
                     <label for="unit">Unit</label>
 
-                    <input type="radio" id="achievement" name="user_role" value="Achievement" required>
+                    <input type="radio" id="achievement" name="as_type" value="Achievement" required>
                     <label for="achievement">Achievement</label>
                 </div>
         </div>

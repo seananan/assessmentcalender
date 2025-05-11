@@ -18,9 +18,12 @@
             <a href="/">Home</a>
             {% if session.logged_in %}
                 <a href="/logout">Log Out</a>
-                <a href="/creategroup">Create a Class</a>
                 <a href="/yourgroups">Your Classes</a>
                 <a href="/groupsignup">Join a Class</a>
+                {% if session.is_teacher %}
+                    <a href="/createassessment">Create an assessment</a>
+                    <a href="/creategroup">Create a Class</a>
+                {% endif %}
             {% else %}
                 <a href="/signup">Sign Up</a>
                 <a href="/login">Log In</a>
