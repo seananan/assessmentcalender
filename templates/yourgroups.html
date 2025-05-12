@@ -9,13 +9,19 @@
             <th>Level</th>
             <th>Teacher</th>
             <th>Email</th>
+            <th></th>
         </tr>
         {% for class in classes %}
         <tr>
-            <td>{{ class[0] }}</td>
             <td>{{ class[1] }}</td>
-            <td>{{ class[2] }} {{ class[3] }}</td>
-            <td>{{ class[4] }}</td>
+            <td>{{ class[2] }}</td>
+            <td>{{ class[3] }} {{ class[4] }}</td>
+            <td>{{ class[5] }}</td>
+            <td>
+                <a href="{{ url_for('render_groups_page', group_id=class[0]) }}">
+                    <button type="button">Open</button>
+                </a>
+            </td>
         </tr>
         {% endfor %}
     </table>

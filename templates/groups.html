@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block pageheading %}Add an assessment{% endblock %}
+
+{% block main %}
+    <div>
+        {% if is_owner %}
+            <a href="{{ url_for('render_addassessment_page') }}">
+            <button>Add a New Assessment</button>
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}
+

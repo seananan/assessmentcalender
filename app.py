@@ -122,24 +122,35 @@ def render_creategroup_page():
         level = request.form.get('level')
         password = request.form.get('password')
         user_id=session['user_id']
+
         con = connect_database(DATABASE)
         cur=con.cursor()
+
         query_insert = "INSERT INTO group_class (group_subject, group_year, group_password, fk_user_id) VALUES (?, ?, ?, ?)"
         cur.execute(query_insert, (subject, level, password, user_id))
+
         con.commit()
         con.close()
+
         redirect("/")
     return render_template("creategroup.html", subjects=subjects)
 
 @app.route('/yourgroups',methods=['POST', 'GET'])
 def render_yourgroups_page():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect("/")
+
     con=connect_database(DATABASE)
     cur=con.cursor()
-    query="SELECT group_class.group_subject, group_class.group_year, user.first_name, user.last_name, user.email FROM group_user JOIN user ON group_user.fk_user_id=user.user_id JOIN group_class ON group_user.fk_group_id=group_class.group_id;"
-    cur.execute(query,)
+
+    query="SELECT group_class.group_id,group_class.group_subject, group_class.group_year, user.first_name, user.last_name, user.email FROM group_user JOIN user ON group_user.fk_user_id=user.user_id JOIN group_class ON group_user.fk_group_id=group_class.group_id WHERE group_user.fk_user_id=?;"
+    cur.execute(query, (user_id,))
     john=cur.fetchall()
+
     con.commit()
     con.close()
+
     print(john)
     return render_template("yourgroups.html",classes=john)
 
@@ -147,25 +158,33 @@ def render_yourgroups_page():
 @app.route('/groupsignup', methods=['POST','GET'])
 def render_groupsignup_page():
     wrong_password = False
+
     if request.method == 'POST':
         password = request.form.get('code')
         print(password)
+
         con = connect_database(DATABASE)
         cur = con.cursor()
+
         query = "SELECT group_id FROM group_class WHERE group_password = ?"
         cur.execute(query, (password,))
         result = cur.fetchall()
+
         con.commit()
         con.close()
+
         if result:
             user_id = session['user_id']
             group_id = result[0][0]
             print(group_id, "HELLO")
             print(user_id, "GOODBYE")
+
             con = connect_database(DATABASE)
             cur = con.cursor()
+
             query_insert = "INSERT INTO group_user (fk_group_id, fk_user_id) VALUES (?, ?)"
             cur.execute(query_insert, (group_id, user_id))
+
             con.commit()
             con.close()
         else:
@@ -174,6 +193,29 @@ def render_groupsignup_page():
         print(wrong_password)
         redirect('/')
     return render_template("groupsignup.html", wrong_password=wrong_password)
+
+
+@app.route('/groups/<int:group_id>', methods=['POST', 'GET'])
+def render_groups_page(group_id):
+    user_id = session['user_id']
+    if not user_id:
+        return redirect("/login")
+
+    con=connect_database(DATABASE)
+    cur=con.cursor()
+
+    query="SELECT fk_user_id FROM group_user WHERE fk_group_id = ?"
+    cur.execute(query, (group_id,))
+    result = cur.fetchone()
+    con.close()
+    if result:
+        group_owner_id = result[0]
+        is_owner = (user_id == group_owner_id)
+        print(is_owner)
+
+        return render_template('groups.html', is_owner=is_owner, group_id=group_id)
+    else:
+        return "group not found", 404
 
 
 @app.route('/createassessment',methods=['POST','GET'])
@@ -200,7 +242,17 @@ def render_createassessment_page():
 def render_addassessment_page():
     con=connect_database(DATABASE)
     cur=con.cursor()
-    query="SELECT as_num, as_name, credits, d_date, d_time, s_time, type FROM assessments"
+    query1="SELECT as_num, as_name, credits, d_date, d_time, s_date, type FROM assessments"
+    cur.execute(query1)
+    result = cur.fetchall()
+    query2="SELECT as_num, as_name FROM assessments"
+    cur.execute(query2)
+    amount_as=cur.fetchall()
+    print(amount_as)
+
+    con.close()
+    print(result)
+    return render_template("addassessment.html",amount_as=amount_as)
 
 if __name__ == '__main__':
     app.run()
