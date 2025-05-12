@@ -8,7 +8,7 @@
             <div class="form-label"> First Name: </div>
             <div class="form-element">
                 <select type="text" name="assessment" required>
-                    <option disable selected>Select an Assessment</option>
+                    <option disabled selected>Select an Assessment</option>
                     {% for assessment in amount_as %}
                         <option value="{{ assessment[0] }} {{ assessment[1] }}">{{ assessment[0] }} - {{ assessment[1] }}</option>
                     {% endfor %}
