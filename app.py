@@ -222,17 +222,20 @@ def render_groups_page(group_id):
     cur = con.cursor()
     query = "SELECT fk_user_id FROM group_user WHERE fk_group_id = ?"
     cur.execute(query, (group_id,))
-    result2 = cur.fetchone()
-    query2 = "SELECT assessments.as_num, assessments.as_name, assessments.credits, assessments.d_date, assessments.d_time FROM as_group JOIN assessments ON fk_as_id=as_id"
-    cur.execute(query2,)
+    owner_id = cur.fetchone()
+    query2 = "SELECT assessments.as_num, assessments.as_name, assessments.credits, assessments.d_date, assessments.d_time FROM as_group JOIN assessments ON fk_as_id=as_id WHERE fk_group_id=?"
+    cur.execute(query2, (group_id,))
     assessment_info=cur.fetchall()
     print(assessment_info)
-    if result2:
-        group_owner_id = result2[0]
+    query3 = "SELECT group_subject, group_year FROM group_class WHERE group_id=?"
+    cur.execute(query3, (group_id,))
+    group_name = cur.fetchall()
+    if owner_id:
+        group_owner_id = owner_id[0]
         is_owner = (user_id == group_owner_id)
 
 
-        return render_template('groups.html', is_owner=is_owner, group_id=group_id, assessment_info=assessment_info)
+        return render_template('groups.html', is_owner=is_owner, group_id=group_id, assessment_info=assessment_info, group_name=group_name)
     else:
         return "group not found", 404
 
@@ -274,8 +277,9 @@ def render_addassessment_page(group_id):
         cur.execute(query_insert, (group_id, as_id[0]))
         con.commit()
         con.close()
+        return redirect(f"/groups/{group_id}")
+    return render_template("addassessment.html", amount_as=amount_as, group_id=group_id)
 
-    return render_template("addassessment.html", amount_as=amount_as)
 
 
 if __name__ == '__main__':

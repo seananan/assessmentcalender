@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block pageheading %}welcome{% endblock %}
+{% block pageheading %}Add an Assessment{% endblock %}
 
 {% block main %}
     <form class="myform" method="post">
@@ -23,5 +23,7 @@
     </form>
     <br>
     <br>
-    <p><a href="/groups">Back</a></p>
+    <br>
+    <br>
+    <p><a href="/groups/{{ group_id }}">Back</a></p>
 {% endblock %}
