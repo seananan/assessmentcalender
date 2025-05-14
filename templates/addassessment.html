@@ -10,7 +10,7 @@
                 <select type="text" name="assessment" required>
                     <option disabled selected>Select an Assessment</option>
                     {% for assessment in amount_as %}
-                        <option value="{{ assessment[0] }} {{ assessment[1] }}">{{ assessment[0] }} - {{ assessment[1] }}</option>
+                        <option value="{{ assessment[2] }}">{{ assessment[0] }} - {{ assessment[1] }}</option>
                     {% endfor %}
                 </select>
             </div>

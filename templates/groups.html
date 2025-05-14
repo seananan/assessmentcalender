@@ -4,10 +4,29 @@
 {% block main %}
     <div>
         {% if is_owner %}
-            <a href="{{ url_for('render_addassessment_page') }}">
+            <a href="{{ url_for('render_addassessment_page', group_id = group_id) }}">
             <button>Add a New Assessment</button>
             </a>
         {% endif %}
     </div>
+    <table>
+        <tr>
+            <th>Assessment</th>
+            <th>Credits</th>
+            <th>Due date</th>
+        </tr>
+        {% for as in assessments %}
+        <tr>
+            <td>{{ as[0] }} {{ as[1] }}</td>
+            <td>{{ as[2] }}</td>
+            <td>{{ as[3] }} {{ as[4] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 {% endblock %}
+
+
+
+
+
 
