@@ -223,13 +223,16 @@ def render_groups_page(group_id):
     query = "SELECT fk_user_id FROM group_user WHERE fk_group_id = ?"
     cur.execute(query, (group_id,))
     result2 = cur.fetchone()
-    con.close()
+    query2 = "SELECT assessments.as_num, assessments.as_name, assessments.credits, assessments.d_date, assessments.d_time FROM as_group JOIN assessments ON fk_as_id=as_id"
+    cur.execute(query2,)
+    assessment_info=cur.fetchall()
+    print(assessment_info)
     if result2:
         group_owner_id = result2[0]
         is_owner = (user_id == group_owner_id)
 
 
-        return render_template('groups.html', is_owner=is_owner, group_id=group_id)
+        return render_template('groups.html', is_owner=is_owner, group_id=group_id, assessment_info=assessment_info)
     else:
         return "group not found", 404
 

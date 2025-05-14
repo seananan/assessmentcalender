@@ -15,11 +15,11 @@
             <th>Credits</th>
             <th>Due date</th>
         </tr>
-        {% for as in assessments %}
+        {% for info in assessment_info %}
         <tr>
-            <td>{{ as[0] }} {{ as[1] }}</td>
-            <td>{{ as[2] }}</td>
-            <td>{{ as[3] }} {{ as[4] }}</td>
+            <td>{{info[0]}} {{info[1]}}</td>
+            <td>{{info[2]}}</td>
+            <td>{{info[3]}} | {{info[4]}}</td>
         </tr>
         {% endfor %}
     </table>
