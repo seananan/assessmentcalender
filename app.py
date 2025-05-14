@@ -280,6 +280,13 @@ def render_addassessment_page(group_id):
         return redirect(f"/groups/{group_id}")
     return render_template("addassessment.html", amount_as=amount_as, group_id=group_id)
 
+@app.route('/remove_assessment', methods=['POST', 'GET'])
+def render_remove_assessment_page():
+    if request.method=='POST':
+        as_info = request.form.get('as_id')
+        as_id=as_info.strip()
+        query="REMOVE FROM as_group WHERE fk_"
+
 
 
 if __name__ == '__main__':
