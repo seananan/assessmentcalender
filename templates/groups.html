@@ -21,7 +21,11 @@
             <td>{{info[0]}} {{info[1]}}</td>
             <td>{{info[2]}}</td>
             <td>{{info[3]}} | {{info[4]}}</td>
-
+            <td>
+                <a href="{{ url_for('render_remove_assessment_page') }}">
+                    <button type="button">Open</button>
+                </a>
+            </td>
         </tr>
         {% endfor %}
     </table>

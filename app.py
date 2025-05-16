@@ -285,7 +285,16 @@ def render_remove_assessment_page():
     if request.method=='POST':
         as_info = request.form.get('as_id')
         as_id=as_info.strip()
-        query="REMOVE FROM as_group WHERE fk_"
+        con=connect_database(DATABASE)
+        cur=con.cursor()
+        query="SELECT * FROM as_group WHERE fk_as_id=?"
+        cur.execute(query, (as_id,))
+        troybird=cur.fetchall()
+        print(troybird)
+        con.commit()
+        con.close()
+    return render_template("r.html")
+
 
 
 
