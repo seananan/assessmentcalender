@@ -1,7 +1,6 @@
 import sqlite3
 from datetime import date
 from sqlite3 import Error
-
 from flask import Flask, render_template, request, redirect, session
 from flask_bcrypt import Bcrypt
 
@@ -129,6 +128,46 @@ def render_logout_page():
     session.clear()
     return redirect("/")
 
+@app.route('/userprofile')
+def render_profile_page():
+    user_id=session.get('user_id')
+    con = connect_database(DATABASE)
+    cur = con.cursor()
+    query="SELECT first_name, last_name, email FROM user WHERE user_id = ?"
+    cur.execute(query, (user_id,))
+    user_info = cur.fetchone()
+    con.commit()
+    con.close()
+    return render_template("userprofile.html",user_info=user_info)
+
+@app.route('/editinfo', methods=['POST', 'GET'])
+def render_edit_info_page():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect("/login")
+    con = connect_database(DATABASE)
+    cur = con.cursor()
+    query = "SELECT first_name, last_name, email, password FROM user WHERE user_id = ?"
+    cur.execute(query, (user_id,))
+    user_info = cur.fetchone()
+    con.close()
+    if request.method == 'POST':
+        update_fname = request.form.get('user_fname').title().strip()
+        update_lname = request.form.get('user_lname').title().strip()
+        update_email = request.form.get('user_email').lower().strip()
+        update_password = request.form.get('user_password1')
+        fname=update_fname if update_fname else user_info[0]
+        lname=update_lname if update_lname else user_info[1]
+        email=update_email if update_email else user_info[2]
+        password=update_password if update_password else user_info[3]
+        con = connect_database(DATABASE)
+        cur = con.cursor()
+        query_update = "UPDATE user SET first_name = ?, last_name = ?, email = ?, password = ? WHERE user_id = ?"
+        cur.execute(query_update, (fname, lname, email, password, user_id))
+        con.commit()
+        con.close()
+        return redirect("/userprofile")
+    return render_template("editinfo.html")
 
 @app.route('/creategroup', methods=['POST', 'GET'])
 def render_creategroup_page():
@@ -204,6 +243,7 @@ def render_groupsignup_page():
 
             con.commit()
             con.close()
+            return redirect("/yourgroups")
         else:
             wrong_password = True
         con.close()
@@ -223,7 +263,7 @@ def render_groups_page(group_id):
     query = "SELECT fk_user_id FROM group_user WHERE fk_group_id = ?"
     cur.execute(query, (group_id,))
     owner_id = cur.fetchone()
-    query2 = "SELECT assessments.as_num, assessments.as_name, assessments.credits, assessments.d_date, assessments.d_time FROM as_group JOIN assessments ON fk_as_id=as_id WHERE fk_group_id=?"
+    query2 = "SELECT assessments.as_num, assessments.as_name, assessments.credits, assessments.d_date, assessments.d_time, assessments.as_id FROM as_group JOIN assessments ON fk_as_id=as_id WHERE fk_group_id=?"
     cur.execute(query2, (group_id,))
     assessment_info=cur.fetchall()
     print(assessment_info)
@@ -287,13 +327,13 @@ def render_remove_assessment_page():
         as_id=as_info.strip()
         con=connect_database(DATABASE)
         cur=con.cursor()
-        query="SELECT * FROM as_group WHERE fk_as_id=?"
+        query="DELETE FROM as_group WHERE fk_as_id=?"
         cur.execute(query, (as_id,))
         troybird=cur.fetchall()
         print(troybird)
         con.commit()
         con.close()
-    return render_template("r.html")
+    return redirect(request.referrer)
 
 
 
