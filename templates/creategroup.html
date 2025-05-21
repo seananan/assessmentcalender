@@ -9,7 +9,7 @@
             <div class="form-element">
                 <select type="text" name="subject" required>
                     <option value="" disabled selected>Select a subject</option>
-                    {% for subject in subjects %}
+                    {% for subject in subjects %} <!-- Displays all available subjects for a group.-->
                         <option value="{{ subject }}">{{ subject }}</option>
                     {% endfor %}
                 </select>
@@ -20,7 +20,7 @@
             <div class="form-element">
                 <select type="text" name="level" required>
                     <option value="" disabled selected>Select a year level</option>
-                    {% for year in range(9, 14) %}
+                    {% for year in range(9, 14) %} <!-- Displays all available year levels for a group.-->
                         <option value="{{ year }}">{{ year }}</option>
                     {% endfor %}
                 </select>

@@ -5,16 +5,16 @@
     <h1>Your Info</h1>
     <div class="form-group">
         <span class="form-label">Name:</span>
-        <span class="form-element">{{ user_info[0] }} {{ user_info[1] }}</span>
+        <span class="form-element">{{ user_info[0] }} {{ user_info[1] }}</span> <!--Displays the name of the user-->
     </div>
     <div class="form-group">
         <span class="form-label">Email:</span>
-        <span class="form-element">{{ user_info[2]}}</span>
+        <span class="form-element">{{ user_info[2]}}</span> <!--Displays the email of the user.-->
     </div>
     <br>
     <br>
-    <a href="{{ url_for('render_edit_info_page') }}">
-        <button type="button">Update your information</button>
+    <a href="{{ url_for('render_edit_info_page') }}"> <!--Renders the edit_info_page-->
+        <button type="button">Update your information</button> <!-- Button to submit request for removal.-->
     </a>
 </div>
 {% endblock %}

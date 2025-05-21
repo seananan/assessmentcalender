@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block pageheading %}
-    {% if session.logged_in %}
+    {% if session.logged_in %} <!--Checking if user is logged in, if it is, displays their name, otherwise tells user to log in.-->
         <br> Hello {{ user_name }}!
     {% else %}
         <br> Welcome to the Wellington College assessment calendar!

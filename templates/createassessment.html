@@ -17,7 +17,7 @@
             <div class="form-element">
                 <select type="text" name="credits" required>
                     <option value="" disabled selected>Select amount of credits</option>
-                    {% for credit in range(1, 11) %}
+                    {% for credit in range(1, 11) %} # Allows users to select amount of credits from 1 to 10.
                         <option value="{{ credit }}">{{ credit }}</option>
                     {% endfor %}
                 </select>

@@ -13,17 +13,18 @@
         </tr>
         {% for class in classes %}
         <tr>
-            <td>{{ class[1] }}</td>
-            <td>{{ class[2] }}</td>
-            <td>{{ class[3] }} {{ class[4] }}</td>
-            <td>{{ class[5] }}</td>
+            <td>{{ class[1] }}</td> <!--Class subject-->
+            <td>{{ class[2] }}</td> <!--Year level-->
+            {% for teacher in teacher_info %}
+                <td>{{ teacher[0] }} {{ teacher[1] }}</td> <!--Teacher name.-->
+                <td>{{ teacher[2] }}</td> <!--Teacher email-->
+            {% endfor %}
             <td>
-                <a href="{{ url_for('render_groups_page', group_id=class[0]) }}">
-                    <button type="button">Open</button>
+                <a href="{{ url_for('render_groups_page', group_id=class[0]) }}"> <!--Renders group page, passes through id of group trying to render-->
+                    <button type="button">Open</button> <!-- Button to submit request for removal.-->
                 </a>
             </td>
-        </tr>
         {% endfor %}
+        </tr>
     </table>
 {% endblock %}
-

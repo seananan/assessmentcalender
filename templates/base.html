@@ -16,16 +16,16 @@
         <div class="navbar-brand">Wellington College.</div>
         <div class="navbar-links">
             <a href="/">Home</a>
-            {% if session.logged_in %}
+            {% if session.logged_in %} <!--Shows links if user is signed in.-->
                 <a href="/logout">Log Out</a>
                 <a href="/yourgroups">Classes</a>
                 <a href="/groupsignup">Join Class</a>
                 <a href="/userprofile">Profile</a>
-                {% if session.is_teacher %}
+                {% if session.is_teacher %} <!--Shows links if user is a teacher.-->
                     <a href="/createassessment">Create assessment</a>
                     <a href="/creategroup">Create Class</a>
                 {% endif %}
-            {% else %}
+            {% else %} <!--If not signed up show these lengths-->
                 <a href="/signup">Sign Up</a>
                 <a href="/login">Log In</a>
             {% endif %}
