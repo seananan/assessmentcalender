@@ -44,6 +44,7 @@ def render_homepage():
     :return: Rendered 'home.html' template with user_name variable (unless not logged in)
     """
     username = None
+
     if 'user_id' in session:
         con = connect_database(DATABASE)
         cur = con.cursor()
@@ -64,6 +65,7 @@ def render_signup_page():
     On POST, validates inputs, checks if email is unique, hashes password, inserts user information into session.
     :return: Redirect to home on success, or render 'signup.html' if an error occurred.
     """
+
     if request.method == 'POST':
         fname = request.form.get('user_fname').title().strip()
         lname = request.form.get('user_lname').title().strip()
@@ -75,6 +77,7 @@ def render_signup_page():
         # Validate password match
         if password1 != password2:
             return redirect("/signup?error=passwords+do+not+match")
+
         # Ensure password length
         if len(password1) < 8:
             return redirect("/signup?error=password+must+be+over+8+characters")
@@ -87,6 +90,7 @@ def render_signup_page():
         # Check for existing email
         query = "SELECT email FROM user WHERE email = ?"
         cur.execute(query, (email,))
+
         if cur.fetchall():
             con.close()
             return redirect("/signup?error=email+already+in+use")
@@ -117,6 +121,7 @@ def render_login_page():
     On POST, verifies password and sets user info into session .
     :return: Redirect to home on success or back to login page if there is an error
     """
+
     if request.method == 'POST':
         email = request.form.get('email').strip().lower()
         password = request.form.get('user_password1')
@@ -157,13 +162,17 @@ def render_profile_page():
     :return: Render 'userprofile.html' with user_info
     """
     user_id = session.get('user_id')
+
     con = connect_database(DATABASE)
     cur = con.cursor()
+
     query = "SELECT first_name, last_name, email FROM user WHERE user_id = ?"
     cur.execute(query, (user_id,))
     user_info = cur.fetchone()
+
     con.commit()
     con.close()
+
     return render_template("userprofile.html", user_info=user_info)
 
 
@@ -175,37 +184,48 @@ def render_edit_info_page():
     :return: Render 'editinfo.html' on GET, redirect to '/userprofile' on POST
     """
     user_id = session.get('user_id')
+
     if not user_id:
         return redirect("/login")
+
     con = connect_database(DATABASE)
     cur = con.cursor()
+
     query = "SELECT first_name, last_name, email, password FROM user WHERE user_id = ?"
     cur.execute(query, (user_id,))
     user_info = cur.fetchone()
     con.close()
+
     if request.method == 'POST':
         update_fname = request.form.get('user_fname').title().strip()
         update_lname = request.form.get('user_lname').title().strip()
         update_email = request.form.get('user_email').lower().strip()
         update_password = request.form.get('user_password1')
+
         fname = update_fname if update_fname else user_info[0]
         lname = update_lname if update_lname else user_info[1]
         email = update_email if update_email else user_info[2]
         password = update_password if update_password else user_info[3]
+
         con = connect_database(DATABASE)
         cur = con.cursor()
+
         query_update = "UPDATE user SET first_name = ?, last_name = ?, email = ?, password = ? WHERE user_id = ?"
         cur.execute(query_update, (fname, lname, email, password, user_id))
+
         con.commit()
         con.close()
         return redirect("/userprofile")
+
     return render_template("editinfo.html")
 
 
 @app.route('/creategroup', methods=['POST', 'GET'])
 def render_creategroup_page():
+
     subjects = ["Art", "Biology", "Chemistry", "Drama", "English", "Geography", "History", "Mathematics", "Music",
                 "Physics"]
+
     if request.method == 'POST':
         subject = request.form.get('subject')
         level = request.form.get('level')
@@ -217,10 +237,13 @@ def render_creategroup_page():
 
         query_insert = "INSERT INTO group_class (group_subject, group_year, group_password, fk_user_id) VALUES (?, ?, ?, ?)"
         cur.execute(query_insert, (subject, level, password, user_id))
+
         con.commit()
         con.close()
 
+        # Redirect back to homepage after successful create
         redirect("/")
+
     return render_template("creategroup.html", subjects=subjects)
 
 
@@ -232,24 +255,32 @@ def render_yourgroups_page():
     :return: Render 'yourgroups.html' with all class information.
     """
     user_id = session.get('user_id')
+
     if not user_id:
         return redirect("/")
 
     con = connect_database(DATABASE)
     cur = con.cursor()
-    query = "SELECT group_class.group_id,group_class.group_subject, group_class.group_year, group_class.fk_user_id FROM group_user INNER JOIN user ON group_user.fk_user_id=user.user_id INNER JOIN group_class ON group_user.fk_group_id=group_class.group_id WHERE group_user.fk_user_id=?;"
+
+    query = (
+         "SELECT group_class.group_id,group_class.group_subject, group_class.group_year, group_class.fk_user_id "
+         "FROM group_user "
+         "INNER JOIN user ON group_user.fk_user_id=user.user_id "
+         "INNER JOIN group_class ON group_user.fk_group_id=group_class.group_id "
+         "WHERE group_user.fk_user_id=?;"
+    )
     cur.execute(query, (user_id,))
     classes = cur.fetchall()
+
     if not classes:
         con.close()
         return render_template("yourgroups.html", classes=[], teacher_info=None)
-    print(f"class_info={classes}")
     teacher_id = classes[0][3]
-    print(f"group_id={teacher_id}")
+
     query = "SELECT first_name, last_name, email FROM user WHERE user_id = ?"
     cur.execute(query, (teacher_id,))
     teacher_info = cur.fetchall()
-    print(f"teacher_info={teacher_info}")
+
     con.commit()
     con.close()
 
@@ -312,21 +343,30 @@ def render_groups_page(group_id):
 
     con = connect_database(DATABASE)
     cur = con.cursor()
+
     query = "SELECT fk_user_id FROM group_user WHERE fk_group_id = ?"
     cur.execute(query, (group_id,))
     owner_id = cur.fetchone()
-    query2 = "SELECT assessments.as_num, assessments.as_name, assessments.credits, assessments.d_date, assessments.d_time, assessments.as_id FROM as_group JOIN assessments ON fk_as_id=as_id WHERE fk_group_id=?"
+
+    query2 = (
+        "SELECT assessments.as_num, assessments.as_name, assessments.credits, assessments.d_date, assessments.d_time, assessments.as_id "
+        "FROM as_group "
+        "JOIN assessments ON fk_as_id=as_id "
+        "WHERE fk_group_id=?")
     cur.execute(query2, (group_id,))
     assessment_info = cur.fetchall()
+
     query3 = "SELECT group_subject, group_year FROM group_class WHERE group_id=?"
     cur.execute(query3, (group_id,))
     group_name = cur.fetchall()
+
     if owner_id:
         group_owner_id = owner_id[0]
         is_owner = (user_id == group_owner_id)
 
         return render_template('groups.html', is_owner=is_owner, group_id=group_id, assessment_info=assessment_info,
                                group_name=group_name)
+
     else:
         return "group not found", 404
 
@@ -349,12 +389,17 @@ def render_createassessment_page():
 
         con = connect_database(DATABASE)
         cur = con.cursor()
+
         # Insert new assessment into table
         query_insert = "INSERT INTO assessments(as_num, as_name, credits, d_date, d_time, s_date, type) VALUES (?,?,?,?,?,?,?)"
         cur.execute(query_insert, (as_num, as_name, credits, d_date, d_time, s_date, as_type))
+
         con.commit()  # Save changes
         con.close()
-        redirect('/')  # Go back to homepage
+
+        # Go back to homepage
+        redirect('/')
+
     return render_template("createassessment.html")
 
 
@@ -369,10 +414,12 @@ def render_addassessment_page(group_id):
     """
     con = connect_database(DATABASE)
     cur = con.cursor()
+
     # Fetch all assessments for selection
     query2 = "SELECT as_num, as_name, as_id FROM assessments"
     cur.execute(query2)
     amount_as = cur.fetchall()
+
     if request.method == 'POST':
         as_id = request.form.get('assessment')  # Selected assessment id
         query_insert = "INSERT INTO as_group(fk_group_id, fk_as_id) VALUES (?, ?)"
@@ -392,16 +439,23 @@ def render_remove_assessment_page():
     On POST, deletes link record.
     :return: Redirect back to referring page
     """
+
     if request.method == 'POST':
         as_info = request.form.get('as_id')
-        as_id = as_info.strip()  # Get the assessment id to remove
+        # Get the assessment id to remove
+        as_id = as_info.strip()
+
         con = connect_database(DATABASE)
         cur = con.cursor()
-        query = "DELETE FROM as_group WHERE fk_as_id=?"  # Delete the record linking group and assessment
+
+        # Delete the record linking group and assessment
+        query = "DELETE FROM as_group WHERE fk_as_id=?"
         cur.execute(query, (as_id,))
+
         con.commit()
         con.close()
-    return redirect(request.referrer)  # Return to the previous page after removal
+    # Return to the previous page after removal
+    return redirect(request.referrer)
 
 
 if __name__ == '__main__':

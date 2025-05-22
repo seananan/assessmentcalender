@@ -20,7 +20,7 @@
                 <td>{{ teacher[2] }}</td> <!--Teacher email-->
             {% endfor %}
             <td>
-                <a href="{{ url_for('render_groups_page', group_id=class[0]) }}"> <!--Renders group page, passes through id of group trying to render-->
+                <a href="/groups/{{ class[0] }}"> <!--Renders group page, passes through id of group trying to render-->
                     <button type="button">Open</button> <!-- Button to submit request for removal.-->
                 </a>
             </td>

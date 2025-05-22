@@ -4,7 +4,7 @@
 {% block main %}
     <div>
         {% if is_owner %}
-            <a href="{{ url_for('render_addassessment_page', group_id = group_id) }}">
+            <a href="/addassessment/{{ group_id }}">
             <button>Add a New Assessment</button>
             </a>
         {% endif %}
@@ -23,7 +23,7 @@
             <td>{{info[3]}} | {{info[4]}}</td> <!--Due date and time.-->
             {% if is_owner %}
             <td>
-                <form action="{{ url_for('render_remove_assessment_page') }}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to remove this assessment?');"> <!-- Renders the remove_assessment_page with the method post.-->
+                <form action="/remove_assessment" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to remove this assessment?');"> <!-- Renders the remove_assessment_page with the method post.-->
                     <input type="hidden" name="as_id" value="{{ info[5] }}"> <!-- Assessment id of row to be removed.-->
                     <button type="submit">Remove</button> <!-- Button to submit request for removal.-->
                 </form>
@@ -36,7 +36,7 @@
     <br>
     <br>
     <br>
-    <a><a href="/yourgroups">Back</a></a> <!--Takes user back to group page.-->
+    <a href="/yourgroups">Back</a> <!--Takes user back to group page.-->
 {% endblock %}
 
 
