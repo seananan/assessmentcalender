@@ -23,7 +23,7 @@
             <td>{{info[3]}} | {{info[4]}}</td> <!--Due date and time.-->
             {% if is_owner %}
             <td>
-                <form action="{{ url_for('render_remove_assessment_page') }}" method="post" style="display:inline;"> <!-- Renders the remove_assessment_page with the method post.-->
+                <form action="{{ url_for('render_remove_assessment_page') }}" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to remove this assessment?');"> <!-- Renders the remove_assessment_page with the method post.-->
                     <input type="hidden" name="as_id" value="{{ info[5] }}"> <!-- Assessment id of row to be removed.-->
                     <button type="submit">Remove</button> <!-- Button to submit request for removal.-->
                 </form>

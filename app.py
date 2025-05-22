@@ -204,12 +204,6 @@ def render_edit_info_page():
 
 @app.route('/creategroup', methods=['POST', 'GET'])
 def render_creategroup_page():
-    """
-    Create a new group.
-    On GET, shows form with subject options.
-    On POST, inserts into group_class subject, level, and join code.
-    :return: Render 'creategroup.html' with subjects list or redirect to home on success
-    """
     subjects = ["Art", "Biology", "Chemistry", "Drama", "English", "Geography", "History", "Mathematics", "Music",
                 "Physics"]
     if request.method == 'POST':
@@ -243,10 +237,12 @@ def render_yourgroups_page():
 
     con = connect_database(DATABASE)
     cur = con.cursor()
-
-    query = "SELECT group_class.group_id,group_class.group_subject, group_class.group_year, group_class.fk_user_id"" FROM group_user JOIN user ON group_user.fk_user_id=user.user_id JOIN group_class ON group_user.fk_group_id=group_class.group_id WHERE group_user.fk_user_id=?;"
+    query = "SELECT group_class.group_id,group_class.group_subject, group_class.group_year, group_class.fk_user_id FROM group_user INNER JOIN user ON group_user.fk_user_id=user.user_id INNER JOIN group_class ON group_user.fk_group_id=group_class.group_id WHERE group_user.fk_user_id=?;"
     cur.execute(query, (user_id,))
     classes = cur.fetchall()
+    if not classes:
+        con.close()
+        return render_template("yourgroups.html", classes=[], teacher_info=None)
     print(f"class_info={classes}")
     teacher_id = classes[0][3]
     print(f"group_id={teacher_id}")
